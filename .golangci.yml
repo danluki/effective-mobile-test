@@ -1,0 +1,89 @@
+run:
+  timeout: 1m
+
+linters-settings:
+  funlen:
+    lines: 100
+    statements: 50
+    ignore-comments: true
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck #To check errors when TestStruct is not TestStruct cus. e is not ascii symbol
+    - unused #To identify unused code
+    - dogsled #Finding if to many blanks indentifier
+    - errcheck #For check that errors if not missed
+    - exhaustive #To find cases with missed cases
+    - exportloopref #Find exported loops variables
+    - gocognit #Find too complicated code with tones of nested ifs, loops etc
+    - gofmt
+    - gofumpt #Check golang codestyle
+    - goheader
+    - goimports
+    - gomodguard
+    - goprintffuncname
+    - gosimple
+    - govet
+    - misspell
+    - nakedret
+    - nestif
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unused
+    - whitespace
+    - durationcheck
+    - forbidigo
+    - forcetypeassert
+    - importas
+    - nilerr
+    - predeclared
+    # - thelper
+    - tparallel
+    - wastedassign
+    - promlinter
+    - bodyclose
+    - dupl
+    - godot
+    - funlen
+    - wsl
+    - gochecknoglobals
+    - gochecknoinits
+    - goconst
+    # - gocritic
+    - godox
+    # - goerr113 need to use this
+    - noctx
+    - prealloc
+    #- stylecheck need to use this too maybe
+    # - testpackage maybe this too
+    # - errorlint THIS NEEDS TO BE USED
+    # - revive this is needs to
+    - tagliatelle
+    - unparam
+    # - exhaustruct
+
+issues:
+  exclude-rules:
+    - path: (mocks|mock.go)
+      linters:
+        - forcetypeassert
+    - path: (_test\.go|tests)
+      linters:
+        - gochecknoglobals
+        - bodyclose
+        - dupl
+        - funlen
+        - goerr113
+        - gosec
+        - noctx
+    - path: (internal/delivery/http)
+      linters:
+        - godot
