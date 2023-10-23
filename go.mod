@@ -1,6 +1,6 @@
 module github.com/danluki/effective-mobile-test
 
-go 1.21.3
+go 1.21
 
 require (
 	github.com/JGLTechnologies/gin-rate-limit v1.5.4
