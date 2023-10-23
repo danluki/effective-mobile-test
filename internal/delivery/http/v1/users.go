@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -14,13 +13,13 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	{
 		users.POST("/", h.userCreate)
 		users.GET("/", h.userGetMany)
-		users.PATCH("/", h.userPatch)
+		users.PATCH("/:id", h.userPatch)
 		users.DELETE("/:id", h.userDelete)
 	}
 }
 
 type userCreateInput struct {
-	Name       string `json:"name"       binding:"requied"`
+	Name       string `json:"name"       binding:"required"`
 	Surname    string `json:"surname"    binding:"required"`
 	Patronymic string `json:"patronymic" binding:"required"`
 }
@@ -46,7 +45,7 @@ func (h *Handler) userCreate(c *gin.Context) {
 
 type userGetManyInput struct {
 	Gender   *string `json:"gender"    form:"gender"`
-	MinAge   *int    `json:"min_age"   form:"min_age"   binding:"min=0"`
+	MinAge   *int    `json:"min_age"   form:"min_age"`
 	MaxAge   *int    `json:"max_age"   form:"max_age"`
 	Country  *string `json:"country"   form:"country"`
 	Page     int     `json:"page"      form:"page"      binding:"required"`
@@ -75,12 +74,10 @@ func (h *Handler) userGetMany(c *gin.Context) {
 }
 
 type userPatchInput struct {
-	Name       *string `json:"name"`
-	Surname    *string `json:"surname"`
-	Patronymic *string `json:"patronymic"`
-	Age        *uint   `json:"age"`
-	Gender     *string `json:"gender"`
-	Country    *string `json:"country"`
+	Name    *string `json:"name"`
+	Age     *uint   `json:"age"`
+	Gender  *string `json:"gender"`
+	Country *string `json:"country"`
 }
 
 func (h *Handler) userPatch(c *gin.Context) {
@@ -97,13 +94,11 @@ func (h *Handler) userPatch(c *gin.Context) {
 	}
 
 	user, err := h.services.Users.Update(c.Request.Context(), service.UpdateUserInput{
-		ID:         convertedId,
-		Name:       input.Name,
-		Surname:    input.Surname,
-		Patronymic: input.Patronymic,
-		Age:        input.Age,
-		Gender:     input.Gender,
-		Country:    input.Country,
+		ID:      convertedId,
+		Name:    input.Name,
+		Age:     input.Age,
+		Gender:  input.Gender,
+		Country: input.Country,
 	})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
@@ -123,10 +118,6 @@ func (h *Handler) userDelete(c *gin.Context) {
 
 	err = h.services.Users.Delete(c.Request.Context(), int32(convertedId))
 	if err != nil {
-		if errors.Is(err, errors.New("not found")) {
-			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
-		}
-
 		c.AbortWithStatusJSON(http.StatusInternalServerError, "Internal Server Error")
 	}
 

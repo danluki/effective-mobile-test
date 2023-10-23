@@ -62,6 +62,7 @@ func (us *UsersService) Create(ctx context.Context, input CreateUserInput) (*dom
 		us.logger.Error("Error:", slog.Any("err", err))
 		return nil, err
 	}
+
 	if len(genderizeResponse) == 0 {
 		us.logger.Error("Error:", slog.Any("err", err))
 		return nil, errors.New("cannot find gender")
@@ -72,6 +73,7 @@ func (us *UsersService) Create(ctx context.Context, input CreateUserInput) (*dom
 		us.logger.Error("Error:", slog.Any("err", err))
 		return nil, err
 	}
+
 	if len(nationalizeResponse.Country) == 0 {
 		us.logger.Error("Error:", slog.Any("err", err))
 		return nil, errors.New("cannot find country")
@@ -126,6 +128,7 @@ func (us *UsersService) List(ctx context.Context, input ListUsersInput) ([]domai
 	for _, user := range users {
 		convertedUsers = append(convertedUsers, *us.convertUserToDomain(&user))
 	}
+
 	return convertedUsers, nil
 }
 
@@ -141,12 +144,10 @@ type UpdateUserInput struct {
 
 func (us *UsersService) Update(ctx context.Context, input UpdateUserInput) (*domain.User, error) {
 	user, err := us.repo.Users.Update(ctx, int32(input.ID), repository.UpdateUserInfo{
-		Name:       input.Name,
-		Surname:    input.Surname,
-		Patronymic: input.Patronymic,
-		Age:        input.Age,
-		Gender:     input.Gender,
-		Country:    input.Country,
+		Name:    input.Name,
+		Age:     input.Age,
+		Gender:  input.Gender,
+		Country: input.Country,
 	})
 	if err != nil {
 		us.logger.Error("Error:", slog.Any("err", err))

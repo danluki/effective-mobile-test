@@ -1,0 +1,4 @@
+appEnv: "production"
+databaseUrl: postgres://test:test@postgres:5432/test?sslmode=disable
+migrationsPath: "./migrations"
+httpServerAddress: "0.0.0.0:8000"

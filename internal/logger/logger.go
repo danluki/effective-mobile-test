@@ -67,11 +67,14 @@ func New(opts Opts) Logger {
 
 func (c *logger) handle(level slog.Level, input string, fields ...any) {
 	var pcs [1]uintptr
+
 	runtime.Callers(3, pcs[:])
+
 	r := slog.NewRecord(time.Now(), level, input, pcs[0])
 	for _, f := range fields {
 		r.Add(f)
 	}
+
 	_ = c.log.Handler().Handle(context.Background(), r)
 }
 

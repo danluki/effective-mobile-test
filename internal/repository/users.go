@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 
 	"github.com/danluki/effective-mobile-test/internal/database/models"
 	"gorm.io/gorm"
@@ -68,12 +67,15 @@ func (repo *UsersRepository) GetMany(
 	if input.Gender != nil {
 		query = query.Where("gender = ?", *input.Gender)
 	}
+
 	if input.MinAge != nil {
 		query = query.Where("age >= ?", *input.MinAge)
 	}
+
 	if input.MaxAge != nil {
 		query = query.Where("age <= ?", *input.MaxAge)
 	}
+
 	if input.Nationality != nil {
 		query = query.Where("nationality = ?", *input.Nationality)
 	}
@@ -94,20 +96,14 @@ func (repo *UsersRepository) Delete(ctx context.Context, id int32) error {
 		return err
 	}
 
-	if repo.db.RowsAffected < 1 {
-		return errors.New("not found")
-	}
-
 	return nil
 }
 
 type UpdateUserInfo struct {
-	Name       *string
-	Surname    *string
-	Patronymic *string
-	Age        *uint
-	Gender     *string
-	Country    *string
+	Name    *string
+	Age     *uint
+	Gender  *string
+	Country *string
 }
 
 func (repo *UsersRepository) Update(
@@ -116,6 +112,8 @@ func (repo *UsersRepository) Update(
 	userUpdateInfo UpdateUserInfo,
 ) (*models.User, error) {
 	var user models.User
+	user.ID = id
+
 	err := repo.db.First(&user).Error
 	if err != nil {
 		return nil, err
@@ -125,18 +123,15 @@ func (repo *UsersRepository) Update(
 	if userUpdateInfo.Name != nil {
 		updates["name"] = *userUpdateInfo.Name
 	}
-	if userUpdateInfo.Surname != nil {
-		updates["surname"] = *userUpdateInfo.Surname
-	}
-	if userUpdateInfo.Patronymic != nil {
-		updates["patronymic"] = *userUpdateInfo.Patronymic
-	}
+
 	if userUpdateInfo.Age != nil {
 		updates["age"] = *userUpdateInfo.Age
 	}
+
 	if userUpdateInfo.Gender != nil {
 		updates["gender"] = *userUpdateInfo.Gender
 	}
+
 	if userUpdateInfo.Country != nil {
 		updates["country"] = *userUpdateInfo.Country
 	}

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -18,8 +19,10 @@ import (
 	"github.com/danluki/effective-mobile-test/internal/server"
 	"github.com/danluki/effective-mobile-test/internal/service"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	"github.com/masonkmeyer/agify"
 	"github.com/masonkmeyer/nationalize"
+	"github.com/pressly/goose"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
@@ -37,6 +40,8 @@ func Run(configPath string) {
 	}
 
 	gin.SetMode(gin.ReleaseMode)
+
+	runMigrations(cfg)
 
 	db, err := gorm.Open(
 		postgres.Open(cfg.DatabaseUrl), &gorm.Config{
@@ -95,4 +100,20 @@ func Run(configPath string) {
 
 	_, shutdown := context.WithTimeout(context.Background(), timeout)
 	defer shutdown()
+}
+
+func runMigrations(cfg *config.Config) {
+	pgDB, err := sql.Open("postgres", cfg.DatabaseUrl)
+	if err != nil {
+		panic(err)
+	}
+	defer pgDB.Close()
+
+	if err := goose.SetDialect("postgres"); err != nil {
+		panic(err)
+	}
+
+	if err := goose.Up(pgDB, cfg.MigrationsPath); err != nil {
+		panic(err)
+	}
 }

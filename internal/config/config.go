@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	DatabaseUrl       string `default:""             validate:"required"`
-	AppEnv            string `default:"development"  validate:"required"`
-	HttpServerAddress string `default:"0.0.0.0:8000" validate:"required"`
+	DatabaseUrl       string `default:"postgres://test:test@postgres:5432/test?sslmode=disable" validate:"required"`
+	AppEnv            string `default:"development"                                             validate:"required"`
+	MigrationsPath    string `default:"./internal/database/migrations"                          validate:"required"`
+	HttpServerAddress string `default:"0.0.0.0:8000"                                            validate:"required"`
 }
 
 func LoadConfig(path string) (*Config, error) {

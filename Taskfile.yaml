@@ -1,0 +1,44 @@
+version: "3"
+
+tasks:
+  build:
+    cmds:
+      - go build -ldflags="-s -w" -o build-out cmd/app/main.go
+
+  test:
+    cmds:
+      - go test --short -coverprofile=cover.out -v ./...
+      - go tool cover -func=cover.out | grep "total"
+
+  lint:
+    cmds:
+      - golangci-lint run
+
+  migrateup_dev:
+    cmds:
+      - goose -v -dir "internal/database/migrations" postgres "postgresql://test:test@localhost:54326/test?sslmode=disable" up
+
+  migratedown_dev:
+    cmds:
+      - goose -v -dir "internal/database/migrations" postgres "postgresql://test:test@localhost:54326/test?sslmode=disable" down
+
+  migrateup:
+    cmds:
+      - goose -v -dir "{{.MIGRATION_PATH}}" postgres {{.DB_URL}} up
+
+  migratedown:
+    cmds:
+      - goose -v -dir "{{.MIGRATION_PATH}}" postgres {{.DB_URL}} down
+
+  new_migration:
+    cmds:
+      - goose -v -dir "{{.MIGRATION_PATH}}" create {{.NAME}} sql
+
+  gen:
+    cmds:
+      - go generate ./...
+
+  dev:
+    deps: [migrateup_dev]
+    cmds:
+      - reflex -s -r '\.go' -- go run ./cmd/app/main.go

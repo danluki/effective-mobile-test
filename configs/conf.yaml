@@ -1,3 +1,4 @@
 appEnv: "development"
 databaseUrl: postgres://test:test@localhost:54326/test?sslmode=disable
+migrationsPath: "./internal/database/migrations"
 httpServerAddress: "0.0.0.0:8000"

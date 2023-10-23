@@ -23,6 +23,6 @@ WORKDIR /app
 
 
 COPY --from=dev /app/configs/conf.docker.yml configs/conf.yml
-COPY --from=dev /app/internal/db/migration migration
+COPY --from=dev /app/internal/database/migrations migrations
 COPY --from=dev /app/build-out ./app
 CMD ["./app"]

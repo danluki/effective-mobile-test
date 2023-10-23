@@ -1,4 +1,7 @@
--- Create "users" table
+-- +goose Up
+-- +goose StatementBegin
+SELECT 'up SQL query';
+
 CREATE TABLE "public"."users" (
  "id" serial NOT NULL,
  "name" character varying(255) NOT NULL,
@@ -7,3 +10,13 @@ CREATE TABLE "public"."users" (
  "country" character varying(255) NOT NULL,
  PRIMARY KEY ("id")
 );
+
+
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+SELECT 'down SQL query';
+
+DROP TABLE IF EXISTS "users" CASCADE; 
+-- +goose StatementEnd
